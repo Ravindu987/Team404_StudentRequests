@@ -10,15 +10,8 @@ router
   .get(authController.protect, requestController.getAllRequests)
   .patch(requestController.setApproval);
 
-router
-  .route("/get")
-  .get(requestController
-  .getRequestsbyStudentId);
+router.route("/get").get(requestController.getRequestsbyStudentId);
 
-  router
-  .route("/add")
-  .post(requestController
-  .addAdditionalInfo);
-
+router.route("/add").post(requestController.addAdditionalInfo);
 
 module.exports = router;
