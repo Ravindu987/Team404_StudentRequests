@@ -11,20 +11,70 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { FormControl, Select, MenuItem, InputLabel, Card } from "@mui/material";
+import useToken from "../../hooks/useToken";
+import jwt_decode from "jwt-decode";
 
 const theme = createTheme();
 
+async function addRequest(data) {
+  return fetch("http://localhost:3000/api/v1/requests/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST",
+    },
+    body: data,
+  }).then((data) => data.json());
+}
+
 export default function StudentNewRequest() {
-  const handleSubmit = (event) => {
+  const { token, setToken } = useToken();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const userName = jwt_decode(token).username;
+    alert(jwt_decode(token));
+    const today = new Date();
+    const request = data.get("Additional")
+      ? JSON.stringify({
+          requestInfo: data.get("subject"),
+          userIndexNo: data.get("index"),
+          userName: userName,
+          requestType: data.get("type"),
+          additionalDetails: data.get("additional"),
+          submittedDate: today,
+          approvalStatus: "pending",
+        })
+      : JSON.stringify({
+          requestInfo: data.get("subject"),
+          userIndexNo: data.get("index"),
+          userName: userName,
+          requestType: data.get("type"),
+          submittedDate: today,
+          approvalStatus: "pending",
+        });
     alert(
       JSON.stringify({
-        subject: data.get("subject"),
-        index: data.get("index"),
-        name: data.get("name"),
-        type: data.get("type"),
-        additional: data.get("additional"),
+        requestInfo: data.get("subject"),
+        userIndexNo: data.get("index"),
+        userName: userName,
+        submittedDate: today,
+        requestType: data.get("type"),
+        additionalDetails: data.get("additional"),
+        approvalStatus: "pending",
+      })
+    );
+    const response = await addRequest(
+      JSON.stringify({
+        requestInfo: data.get("subject"),
+        userIndexNo: data.get("index"),
+        userName: userName,
+        submittedDate: today,
+        requestType: data.get("type"),
+        additionalDetails: data.get("additional"),
+        approvalStatus: "pending",
       })
     );
   };
@@ -107,9 +157,13 @@ export default function StudentNewRequest() {
                     label="Request Type"
                     fullWidth
                   >
-                    <MenuItem value={10}>Late Add/Drop</MenuItem>
-                    <MenuItem value={20}>Deadline Extension</MenuItem>
-                    <MenuItem value={30}>Repeat Exam</MenuItem>
+                    <MenuItem value={"late-add-drop"}>Late Add/Drop</MenuItem>
+                    <MenuItem value={"extend-deadline"}>
+                      Deadline Extension
+                    </MenuItem>
+                    <MenuItem value={"repeat-as-first-attempt"}>
+                      Repeat Exam
+                    </MenuItem>
                   </Select>
                 </FormControl>
               </Grid>

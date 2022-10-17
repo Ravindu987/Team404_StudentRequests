@@ -21,7 +21,7 @@ function App() {
     return (
       <Router>
         <Routes>
-          <Route path="" element={<SignInSide setToken={setToken} />} />
+          <Route index element={<SignInSide setToken={setToken} />} />
           <Route path="signup" element={<SignUpSide setToken={setToken} />} />
         </Routes>
       </Router>

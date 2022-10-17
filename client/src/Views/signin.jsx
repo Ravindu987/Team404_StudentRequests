@@ -14,6 +14,7 @@ import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Img from "../photos/Login.jpg";
 import { Link as RouterLink } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 async function loginUser(credentials) {
   return fetch("http://localhost:3000/api/v1/user/login", {
@@ -46,7 +47,8 @@ export default function SignInSide({ setToken }) {
         password: data.get("password"),
       })
     );
-    alert(JSON.stringify(response));
+    var decode = jwt_decode(response.token);
+    alert(JSON.stringify(decode));
     data.get("remember")
       ? setToken(response.token, "local")
       : setToken(response.token, "session");

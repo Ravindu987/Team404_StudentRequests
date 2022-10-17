@@ -2,13 +2,13 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
 /**
- * 
- * @param {*} err 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ *
+ * @param {*} err
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
  * Pass the err object to this function.
- * Process the error mesg and returns a measningful error message 
+ * Process the error mesg and returns a measningful error message
  * to be passed with the res object.
  * error it self and the stack trace of the error is also sent
  * along with the error message for debugging purposes.
@@ -24,13 +24,13 @@ const sendDevError = (err, req, res, next) => {
 };
 
 /**
- * 
- * @param {*} err 
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ *
+ * @param {*} err
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
  * Pass the err object to this function.
- * Process the error mesg and returns a meaningful simplified error message 
+ * Process the error mesg and returns a meaningful simplified error message
  * to be passed with the res object.
  * This function is used for displaying errors in the deployed stage
  */
@@ -53,11 +53,10 @@ const sendProductionError = (err, req, res, next) => {
   }
 };
 
-
-handleCastError = (err) =>{
+handleCastError = (err) => {
   const message = `Invalid ${err.path}: ${err.path}`;
   return new AppError(message, 400);
-}
+};
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
@@ -66,13 +65,13 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === "development") {
     sendDevError(err, req, res, next);
   } else {
-    let error = {...err};
+    let error = { ...err };
     // Send specific error messages for commonly occuring errors here.
     // Use err.name for identifying the errors
-    if (err.name === 'CastError') {
-      error = handleCastError(err)
+    if (err.name === "CastError") {
+      error = handleCastError(err);
     }
     // Use this for uncommon errors only
-    sendProductionError((err, req, res, next));
+    sendProductionError(err, req, res, next);
   }
 };
